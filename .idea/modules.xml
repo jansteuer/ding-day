@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/gtd.iml" filepath="$PROJECT_DIR$/gtd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gtdapp/gtdapp.iml" filepath="$PROJECT_DIR$/gtdapp/gtdapp.iml" />
+    </modules>
+  </component>
+</project>
+
