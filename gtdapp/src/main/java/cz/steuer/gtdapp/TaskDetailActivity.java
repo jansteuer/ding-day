@@ -42,7 +42,7 @@ public class TaskDetailActivity extends FragmentActivity {
                     getIntent().getStringExtra(TaskDetailFragment.ARG_ITEM_ID));
             TaskDetailFragment fragment = new TaskDetailFragment();
             fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                     .add(R.id.task_detail_container, fragment)
                     .commit();
         }

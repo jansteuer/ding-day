@@ -46,7 +46,7 @@ public class TaskListActivity extends FragmentActivity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((TaskListFragment) getSupportFragmentManager()
+            ((TaskListFragment) getFragmentManager()
                     .findFragmentById(R.id.task_list))
                     .setActivateOnItemClick(true);
         }
@@ -70,7 +70,7 @@ public class TaskListActivity extends FragmentActivity
             arguments.putString(TaskDetailFragment.ARG_ITEM_ID, id);
             TaskDetailFragment fragment = new TaskDetailFragment();
             fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                     .replace(R.id.task_detail_container, fragment)
                     .commit();
 
