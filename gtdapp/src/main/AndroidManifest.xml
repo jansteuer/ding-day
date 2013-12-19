@@ -30,6 +30,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cz.steuer.gtdapp.TaskListActivity" />
         </activity>
+
+        <provider
+            android:name=".model.TasksContentProvider"
+            android:authorities="cz.steuer.gtdapp"
+            android:exported="false" />
     </application>
 
 </manifest>

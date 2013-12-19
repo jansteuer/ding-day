@@ -131,7 +131,7 @@ public class TasksContentProvider extends ContentProvider {
                         "Unrecognized URI: " + uri);
         }
 
-        if (0 >= values.size() ) { return null; }
+        if (values.size() <= 0 ) { return null; }
 
         // create a remote id if there isn't one
         if (null == values.getAsString(TasksDbHelper.COL_REMOTE_ID)) {

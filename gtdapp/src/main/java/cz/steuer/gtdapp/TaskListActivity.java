@@ -1,6 +1,8 @@
 package cz.steuer.gtdapp;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -48,6 +50,8 @@ public class TaskListActivity extends FragmentActivity
                     .findFragmentById(R.id.task_list))
                     .setActivateOnItemClick(true);
         }
+
+        getActionBar().setBackgroundDrawable(new ColorDrawable(Color.YELLOW));
 
         // TODO: If exposing deep links into your app, handle intents here.
     }

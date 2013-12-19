@@ -1,8 +1,12 @@
 package cz.steuer.gtdapp.model;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import cz.steuer.gtdapp.enums.TaskCategory;
 
 /**
  * Created by honza on 12/18/13.
@@ -29,10 +33,27 @@ public class TasksDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        db.execSQL(
+                "CREATE TABLE " + TAB_TASK + "("
+                        + COL_ID + " integer PRIMARY KEY AUTOINCREMENT,"
+                        + COL_TITLE + " text,"
+                        + COL_CATEGORY + " string,"
+                        + COL_STATE + " integer DEFAULT 0,"
+                        + COL_REMOTE_ID + " string UNIQUE" +
+                        ")");
+
+        ContentValues values = new ContentValues();
+        values.put(COL_TITLE, "sampleTask");
+        values.put(COL_CATEGORY, TaskCategory.NEXT.toString());
+
+        db.insert(TAB_TASK, null, values);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        try { db.execSQL("drop table " + TAB_TASK); }
+        catch (SQLiteException e) { }
+        onCreate(db);
     }
 }

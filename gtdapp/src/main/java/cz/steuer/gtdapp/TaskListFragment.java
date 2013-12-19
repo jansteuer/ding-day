@@ -1,13 +1,18 @@
 package cz.steuer.gtdapp;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 import cz.steuer.gtdapp.dummy.DummyContent;
+import cz.steuer.gtdapp.model.TaskContract;
 
 /**
  * A list fragment representing a list of Tasks. This fragment
@@ -18,13 +23,15 @@ import cz.steuer.gtdapp.dummy.DummyContent;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class TaskListFragment extends ListFragment {
+public class TaskListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * The serialization (saved instance state) Bundle key representing the
      * activated item position. Only used on tablets.
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
+
+    private static final int LOADER_ID = 42;
 
     /**
      * The fragment's current callback object, which is notified of list item
@@ -36,6 +43,34 @@ public class TaskListFragment extends ListFragment {
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+    private SimpleCursorAdapter listAdapter;
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(
+                this.getActivity(),
+                TaskContract.Tasks.CONTENT_URI,
+                new String[] {
+                        TaskContract.TasksColumns._ID,
+                        TaskContract.TasksColumns.TITLE,
+                        TaskContract.TasksColumns.CATEGORY,
+                        TaskContract.TasksColumns.STATE
+                },
+                null,
+                null,
+                TaskContract.TasksColumns.TITLE + " ASC");
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        listAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        listAdapter.swapCursor(null);
+    }
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -70,12 +105,24 @@ public class TaskListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
+        String[] from =  new String[] {
+                TaskContract.TasksColumns.TITLE
+        };
+
+        int[] to = new int[] {
+                android.R.id.text1
+        };
+
+        listAdapter = new SimpleCursorAdapter(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                DummyContent.ITEMS));
+                null,
+                from,
+                to
+                );
+
+        setListAdapter(listAdapter);
+        getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
