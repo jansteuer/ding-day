@@ -26,7 +26,7 @@ public class TaskDetailFragment extends Fragment implements LoaderManager.Loader
      * The fragment argument representing the item ID that this fragment
      * represents.
      */
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_ITEM_URI = "item_id";
 
     /**
      * The dummy content this fragment is presenting.
@@ -56,9 +56,8 @@ public class TaskDetailFragment extends Fragment implements LoaderManager.Loader
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String id = getArguments().getString(ARG_ITEM_ID);
-        if (id != null) {
-            taskUri = Uri.withAppendedPath(TaskContract.Tasks.CONTENT_URI, id);
+        taskUri = getArguments().getParcelable(ARG_ITEM_URI);
+        if (taskUri != null) {
             getLoaderManager().initLoader(LOADER_ID, null, this);
         }
 

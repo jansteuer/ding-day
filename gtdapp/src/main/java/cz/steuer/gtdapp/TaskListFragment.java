@@ -87,7 +87,7 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        public void onItemSelected(long id);
     }
 
     /**
@@ -96,7 +96,7 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(long id) {
         }
     };
 
@@ -165,7 +165,7 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+        mCallbacks.onItemSelected(listView.getAdapter().getItemId(position));
     }
 
     @Override

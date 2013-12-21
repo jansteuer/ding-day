@@ -38,8 +38,8 @@ public class TaskDetailActivity extends FragmentActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(TaskDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(TaskDetailFragment.ARG_ITEM_ID));
+            arguments.putParcelable(TaskDetailFragment.ARG_ITEM_URI,
+                    getIntent().getParcelableExtra(TaskDetailFragment.ARG_ITEM_URI));
             TaskDetailFragment fragment = new TaskDetailFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()

@@ -31,6 +31,14 @@
                 android:value="cz.steuer.gtdapp.TaskListActivity" />
         </activity>
 
+        <activity
+            android:name="cz.steuer.gtdapp.NewTaskActivity"
+            android:parentActivityName=".TaskListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cz.steuer.gtdapp.TaskListActivity" />
+        </activity>
+
         <provider
             android:name=".model.TasksContentProvider"
             android:authorities="cz.steuer.gtdapp"

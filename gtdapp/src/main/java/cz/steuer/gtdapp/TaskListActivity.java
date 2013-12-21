@@ -1,16 +1,17 @@
 package cz.steuer.gtdapp;
 
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.animation.Interpolator;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import cz.steuer.gtdapp.enums.TaskCategory;
+import cz.steuer.gtdapp.model.TaskContract;
 
 
 /**
@@ -33,6 +34,7 @@ public class TaskListActivity extends FragmentActivity
         implements TaskListFragment.Callbacks, MenuFragment.Callbacks {
 
     private static final String TAG_FRAGMENT_TASKS = "task_list";
+    public static final String ARG_TASK_CATEGORY = "task_category";
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -40,6 +42,27 @@ public class TaskListActivity extends FragmentActivity
      */
     private boolean mTwoPane;
     private SlidingMenu menu = null;
+    private TaskCategory currentCategory = null;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.task_list_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_add_task:
+                Intent detailIntent = new Intent(this, NewTaskActivity.class);
+                detailIntent.putExtra(NewTaskActivity.ARG_TASK_CATEGORY, currentCategory);
+                startActivity(detailIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +70,8 @@ public class TaskListActivity extends FragmentActivity
 
         setContentView(R.layout.activity_task_list);
 
-        onCategorySelected(TaskCategory.NEXT);
+        currentCategory = (TaskCategory) getIntent().getSerializableExtra(ARG_TASK_CATEGORY);
+        onCategorySelected(currentCategory != null ? currentCategory : TaskCategory.NEXT);
 
 //        Bundle arguments = new Bundle();
 //        arguments.putString(TaskListFragment.ARG_CATEGORY, TaskCategory.INBOX.toString());
@@ -95,13 +119,15 @@ public class TaskListActivity extends FragmentActivity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(long id) {
+        Uri taskUri = Uri.withAppendedPath(TaskContract.Tasks.CONTENT_URI, Long.toString(id));
+
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(TaskDetailFragment.ARG_ITEM_ID, id);
+            arguments.putParcelable(TaskDetailFragment.ARG_ITEM_URI, taskUri);
             TaskDetailFragment fragment = new TaskDetailFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -112,13 +138,15 @@ public class TaskListActivity extends FragmentActivity
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, TaskDetailActivity.class);
-            detailIntent.putExtra(TaskDetailFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra(TaskDetailFragment.ARG_ITEM_URI, taskUri);
             startActivity(detailIntent);
         }
     }
 
     @Override
     public void onCategorySelected(TaskCategory category) {
+        this.currentCategory = category;
+
         int categoryTitle = category.getTitle();
         getActionBar().setTitle(categoryTitle);
         getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(category.getColor())));
