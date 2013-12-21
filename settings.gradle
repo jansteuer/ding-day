@@ -1,1 +1,2 @@
 include ':gtdapp'
+include ':SlidingMenu', ':lib:SlidingMenu:library'

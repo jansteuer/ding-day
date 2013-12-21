@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/SlidingMenu/SlidingMenu.iml" filepath="$PROJECT_DIR$/SlidingMenu/SlidingMenu.iml" />
       <module fileurl="file://$PROJECT_DIR$/gtd.iml" filepath="$PROJECT_DIR$/gtd.iml" />
       <module fileurl="file://$PROJECT_DIR$/gtdapp/gtdapp.iml" filepath="$PROJECT_DIR$/gtdapp/gtdapp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lib/lib.iml" filepath="$PROJECT_DIR$/lib/lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lib/SlidingMenu/lib-SlidingMenu.iml" filepath="$PROJECT_DIR$/lib/SlidingMenu/lib-SlidingMenu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lib/SlidingMenu/library/library.iml" filepath="$PROJECT_DIR$/lib/SlidingMenu/library/library.iml" />
     </modules>
   </component>
 </project>

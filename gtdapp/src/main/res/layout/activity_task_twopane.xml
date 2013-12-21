@@ -10,6 +10,14 @@
     android:showDividers="middle"
     tools:context="cz.steuer.gtdapp.TaskListActivity">
 
+    <fragment
+        android:id="@+id/menu_fragment"
+        android:name="cz.steuer.gtdapp.MenuFragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        tools:layout="@android:layout/list_content" />
+
     <!--
     This layout is a two-pane layout for the Tasks
     master/detail flow. See res/values-large/refs.xml and

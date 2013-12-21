@@ -43,9 +43,12 @@ public class TasksDbHelper extends SQLiteOpenHelper {
                         ")");
 
         ContentValues values = new ContentValues();
-        values.put(COL_TITLE, "sampleTask");
+        values.put(COL_TITLE, "in next category");
         values.put(COL_CATEGORY, TaskCategory.NEXT.toString());
+        db.insert(TAB_TASK, null, values);
 
+        values.put(COL_TITLE, "in inbox category");
+        values.put(COL_CATEGORY, TaskCategory.INBOX.toString());
         db.insert(TAB_TASK, null, values);
 
     }

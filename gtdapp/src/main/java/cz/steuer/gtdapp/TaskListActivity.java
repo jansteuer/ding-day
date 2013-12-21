@@ -1,10 +1,16 @@
 package cz.steuer.gtdapp;
 
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.animation.Interpolator;
+
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+
+import cz.steuer.gtdapp.enums.TaskCategory;
 
 
 /**
@@ -24,7 +30,9 @@ import android.support.v4.app.FragmentActivity;
  * to listen for item selections.
  */
 public class TaskListActivity extends FragmentActivity
-        implements TaskListFragment.Callbacks {
+        implements TaskListFragment.Callbacks, MenuFragment.Callbacks {
+
+    private static final String TAG_FRAGMENT_TASKS = "task_list";
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -35,7 +43,16 @@ public class TaskListActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_task_list);
+
+        Bundle arguments = new Bundle();
+        arguments.putString(TaskListFragment.ARG_CATEGORY, TaskCategory.INBOX.toString());
+        TaskListFragment fragment = new TaskListFragment();
+        fragment.setArguments(arguments);
+        getFragmentManager().beginTransaction()
+                .add(R.id.task_list_container, fragment, TAG_FRAGMENT_TASKS)
+                .commit();
 
         if (findViewById(R.id.task_detail_container) != null) {
             // The detail container view will be present only in the
@@ -51,9 +68,23 @@ public class TaskListActivity extends FragmentActivity
                     .setActivateOnItemClick(true);
         }
 
-        getActionBar().setBackgroundDrawable(new ColorDrawable(Color.YELLOW));
+        if(findViewById(R.id.menu_fragment) == null) {
+            // configure the SlidingMenu
+            SlidingMenu menu = new SlidingMenu(this, SlidingMenu.SLIDING_WINDOW);
+            menu.setMode(SlidingMenu.LEFT);
+            menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+            menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+            menu.setFadeDegree(0.35f);
+            menu.setMenu(R.layout.menu_frame);
+            menu.setBehindScrollScale(0.0f);
 
-        // TODO: If exposing deep links into your app, handle intents here.
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.menu_frame, new MenuFragment())
+                    .commit();
+        }
+
+
     }
 
     /**
@@ -81,5 +112,17 @@ public class TaskListActivity extends FragmentActivity
             detailIntent.putExtra(TaskDetailFragment.ARG_ITEM_ID, id);
             startActivity(detailIntent);
         }
+    }
+
+    @Override
+    public void onCategorySelected(TaskCategory category) {
+        Bundle arguments = new Bundle();
+        arguments.putString(TaskListFragment.ARG_CATEGORY, category.toString());
+        TaskListFragment fragment = new TaskListFragment();
+        fragment.setArguments(arguments);
+        getFragmentManager().beginTransaction()
+                .replace(R.id.task_list_container, fragment, TAG_FRAGMENT_TASKS)
+                .commit();
+
     }
 }

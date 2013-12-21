@@ -8,10 +8,12 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import cz.steuer.gtdapp.dummy.DummyContent;
+import cz.steuer.gtdapp.enums.TaskCategory;
 import cz.steuer.gtdapp.model.TaskContract;
 
 /**
@@ -33,6 +35,8 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
 
     private static final int LOADER_ID = 42;
 
+    public static final String ARG_CATEGORY = "category";
+
     /**
      * The fragment's current callback object, which is notified of list item
      * clicks.
@@ -48,6 +52,8 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String category = args.getString(ARG_CATEGORY);
+
         return new CursorLoader(
                 this.getActivity(),
                 TaskContract.Tasks.CONTENT_URI,
@@ -57,8 +63,8 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
                         TaskContract.TasksColumns.CATEGORY,
                         TaskContract.TasksColumns.STATE
                 },
-                null,
-                null,
+                TaskContract.TasksColumns.CATEGORY + " = ?",
+                new String[] {category},
                 TaskContract.TasksColumns.TITLE + " ASC");
     }
 
@@ -118,11 +124,18 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
                 android.R.layout.simple_list_item_activated_1,
                 null,
                 from,
-                to
-                );
+                to,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+        );
 
         setListAdapter(listAdapter);
-        getLoaderManager().initLoader(LOADER_ID, null, this);
+
+        Bundle args = getArguments();
+        if(args == null || !args.containsKey(ARG_CATEGORY)) {
+            args = new Bundle();
+            args.putString(ARG_CATEGORY, TaskCategory.NEXT.toString());
+        }
+        getLoaderManager().initLoader(LOADER_ID, args, this);
     }
 
 
