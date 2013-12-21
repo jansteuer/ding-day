@@ -3,5 +3,10 @@
 
     <string name="app_name">Gtd App</string>
     <string name="title_task_detail">Task Detail</string>
+    <string name="category_inbox">inbox</string>
+    <string name="category_next">next</string>
+    <string name="category_scheduled">calendar</string>
+    <string name="category_waiting">waiting</string>
+    <string name="category_suspended">suspended</string>
 
 </resources>

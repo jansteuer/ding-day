@@ -2,22 +2,12 @@ package cz.steuer.gtdapp;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.ListFragment;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.DialogInterface;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
-import cz.steuer.gtdapp.R;
-import cz.steuer.gtdapp.dummy.DummyContent;
 import cz.steuer.gtdapp.enums.TaskCategory;
 
 public class MenuFragment  extends Fragment implements View.OnClickListener {

@@ -10,35 +10,40 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:text="inbox" />
+        android:text="inbox"
+        android:background="@color/category_inbox"/>
 
     <Button
         android:id="@+id/menu_item_next"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:text="next" />
+        android:text="next"
+        android:background="@color/category_next"/>
 
     <Button
         android:id="@+id/menu_item_calendar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:text="calendar" />
+        android:text="calendar"
+        android:background="@color/category_scheduled"/>
 
     <Button
         android:id="@+id/menu_item_waiting"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:text="waiting" />
+        android:text="waiting"
+        android:background="@color/category_waiting"/>
 
     <Button
         android:id="@+id/menu_item_suspended"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:text="suspended" />
+        android:text="suspended"
+        android:background="@color/category_suspended"/>
 
 
 </LinearLayout>

@@ -39,6 +39,7 @@ public class TaskListActivity extends FragmentActivity
      * device.
      */
     private boolean mTwoPane;
+    private SlidingMenu menu = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +47,15 @@ public class TaskListActivity extends FragmentActivity
 
         setContentView(R.layout.activity_task_list);
 
-        Bundle arguments = new Bundle();
-        arguments.putString(TaskListFragment.ARG_CATEGORY, TaskCategory.INBOX.toString());
-        TaskListFragment fragment = new TaskListFragment();
-        fragment.setArguments(arguments);
-        getFragmentManager().beginTransaction()
-                .add(R.id.task_list_container, fragment, TAG_FRAGMENT_TASKS)
-                .commit();
+        onCategorySelected(TaskCategory.NEXT);
+
+//        Bundle arguments = new Bundle();
+//        arguments.putString(TaskListFragment.ARG_CATEGORY, TaskCategory.INBOX.toString());
+//        TaskListFragment fragment = new TaskListFragment();
+//        fragment.setArguments(arguments);
+//        getFragmentManager().beginTransaction()
+//                .add(R.id.task_list_container, fragment, TAG_FRAGMENT_TASKS)
+//                .commit();
 
         if (findViewById(R.id.task_detail_container) != null) {
             // The detail container view will be present only in the
@@ -70,10 +73,10 @@ public class TaskListActivity extends FragmentActivity
 
         if(findViewById(R.id.menu_fragment) == null) {
             // configure the SlidingMenu
-            SlidingMenu menu = new SlidingMenu(this, SlidingMenu.SLIDING_WINDOW);
+            menu = new SlidingMenu(this, SlidingMenu.SLIDING_WINDOW);
             menu.setMode(SlidingMenu.LEFT);
             menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-            menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+            menu.setBehindWidthRes(R.dimen.slidingmenu_width);
             menu.setFadeDegree(0.35f);
             menu.setMenu(R.layout.menu_frame);
             menu.setBehindScrollScale(0.0f);
@@ -116,6 +119,10 @@ public class TaskListActivity extends FragmentActivity
 
     @Override
     public void onCategorySelected(TaskCategory category) {
+        int categoryTitle = category.getTitle();
+        getActionBar().setTitle(categoryTitle);
+        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(category.getColor())));
+
         Bundle arguments = new Bundle();
         arguments.putString(TaskListFragment.ARG_CATEGORY, category.toString());
         TaskListFragment fragment = new TaskListFragment();
@@ -123,6 +130,10 @@ public class TaskListActivity extends FragmentActivity
         getFragmentManager().beginTransaction()
                 .replace(R.id.task_list_container, fragment, TAG_FRAGMENT_TASKS)
                 .commit();
+
+        if(menu != null) {
+            menu.showContent(true);
+        }
 
     }
 }
