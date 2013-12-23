@@ -5,10 +5,24 @@
         <item name="android:windowBackground">@color/bg_light</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarStyle">@style/ActionBarStyle</item>
+        <item name="android:listViewStyle">@style/ListView</item>
     </style>
 
     <style name="ActionBarStyle" parent="@android:style/Widget.Holo.ActionBar">
         <item name="android:displayOptions"></item>
+    </style>
+
+    <style name="ListView" parent="@android:style/Widget.ListView">
+        <item name="android:divider">@android:color/transparent</item>
+        <item name="android:dividerHeight">2dp</item>
+    </style>
+
+    <style name="MenuButton" parent="@android:style/Widget.Button">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:paddingLeft">30dp</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:height">60dp</item>
     </style>
 
 </resources>

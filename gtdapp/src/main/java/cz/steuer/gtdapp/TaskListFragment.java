@@ -116,12 +116,12 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
         };
 
         int[] to = new int[] {
-                android.R.id.text1
+                R.id.task_title
         };
 
         listAdapter = new SimpleCursorAdapter(
                 getActivity(),
-                android.R.layout.simple_list_item_activated_1,
+                R.layout.activity_task_list_item,
                 null,
                 from,
                 to,

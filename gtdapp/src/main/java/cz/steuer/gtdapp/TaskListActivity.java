@@ -1,5 +1,6 @@
 package cz.steuer.gtdapp;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -7,6 +8,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
@@ -43,6 +46,7 @@ public class TaskListActivity extends FragmentActivity
     private boolean mTwoPane;
     private SlidingMenu menu = null;
     private TaskCategory currentCategory = null;
+    private TextView mViewTitle;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -67,8 +71,11 @@ public class TaskListActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_task_list);
+
+        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getActionBar().setCustomView(R.layout.actionbar_list);
+        mViewTitle = (TextView) getActionBar().getCustomView().findViewById(R.id.actionbar_title);
 
         currentCategory = (TaskCategory) getIntent().getSerializableExtra(ARG_TASK_CATEGORY);
         onCategorySelected(currentCategory != null ? currentCategory : TaskCategory.NEXT);
@@ -147,8 +154,8 @@ public class TaskListActivity extends FragmentActivity
     public void onCategorySelected(TaskCategory category) {
         this.currentCategory = category;
 
-        int categoryTitle = category.getTitle();
-        getActionBar().setTitle(categoryTitle);
+        mViewTitle.setText(category.getTitle());
+        mViewTitle.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(category.getIcon()), null, null, null);
         getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(category.getColor())));
 
         Bundle arguments = new Bundle();

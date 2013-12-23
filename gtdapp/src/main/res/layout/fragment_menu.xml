@@ -11,7 +11,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:text="inbox"
-        android:background="@color/category_inbox"/>
+        android:drawableLeft="@drawable/ic_action_download"
+        android:background="@color/category_inbox"
+        style="@style/MenuButton"/>
 
     <Button
         android:id="@+id/menu_item_next"
@@ -19,7 +21,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:text="next"
-        android:background="@color/category_next"/>
+        android:drawableLeft="@drawable/ic_action_send_now"
+        android:background="@color/category_next"
+        style="@style/MenuButton"/>
 
     <Button
         android:id="@+id/menu_item_calendar"
@@ -27,7 +31,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:text="calendar"
-        android:background="@color/category_scheduled"/>
+        android:drawableLeft="@drawable/ic_action_go_to_today"
+        android:background="@color/category_scheduled"
+        style="@style/MenuButton"/>
 
     <Button
         android:id="@+id/menu_item_waiting"
@@ -35,7 +41,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:text="waiting"
-        android:background="@color/category_waiting"/>
+        android:drawableLeft="@drawable/ic_action_alarms"
+        android:background="@color/category_waiting"
+        style="@style/MenuButton"/>
 
     <Button
         android:id="@+id/menu_item_suspended"
@@ -43,7 +51,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:text="suspended"
-        android:background="@color/category_suspended"/>
+        android:drawableLeft="@drawable/ic_action_pause"
+        android:background="@color/category_suspended"
+        style="@style/MenuButton"/>
+
+
 
 
 </LinearLayout>
