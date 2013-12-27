@@ -14,12 +14,17 @@ import android.util.Log;
 import net.callmeike.android.data.util.ColumnMap;
 import net.callmeike.android.data.util.ProjectionMap;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 /**
  * Created by honza on 12/18/13.
  */
 public class TasksContentProvider extends ContentProvider {
+
+
+    private static final SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private static final String PK_CONSTRAINT = TasksDbHelper.COL_ID + "=";
 
@@ -44,6 +49,7 @@ public class TasksContentProvider extends ContentProvider {
             .addColumn(TaskContract.TasksColumns.TITLE, TasksDbHelper.COL_TITLE)
             .addColumn(TaskContract.TasksColumns.CATEGORY, TasksDbHelper.COL_CATEGORY)
             .addColumn(TaskContract.TasksColumns.STATE, TasksDbHelper.COL_STATE)
+            .addColumn(TaskContract.TasksColumns.FINISHED_TS, TasksDbHelper.COL_FINISHED_TS)
             .build();
 
     private static final ColumnMap TASKS_COL_MAP = new ColumnMap.Builder()
@@ -62,6 +68,10 @@ public class TasksContentProvider extends ContentProvider {
             .addColumn(
                     TaskContract.TasksColumns.STATE,
                     TasksDbHelper.COL_STATE,
+                    ColumnMap.Type.STRING)
+            .addColumn(
+                    TaskContract.TasksColumns.FINISHED_TS,
+                    TasksDbHelper.COL_FINISHED_TS,
                     ColumnMap.Type.STRING)
             .build();
 
@@ -195,6 +205,12 @@ public class TasksContentProvider extends ContentProvider {
                 break;
             default:
                 throw new IllegalArgumentException("Unrecognized URI: " + uri);
+        }
+
+        if(TaskContract.Tasks.STATE_DONE == values.getAsInteger(TaskContract.TasksColumns.STATE)) {
+            values.put(TaskContract.TasksColumns.FINISHED_TS, iso8601Format.format(new Date()));
+        } else if(TaskContract.Tasks.STATE_NOT_DONE == values.getAsInteger(TaskContract.TasksColumns.STATE)) {
+            values.putNull(TaskContract.TasksColumns.FINISHED_TS);
         }
 
         values = colMap.translateCols(values);

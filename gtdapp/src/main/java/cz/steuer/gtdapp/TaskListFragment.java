@@ -8,6 +8,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -22,7 +23,6 @@ import cz.steuer.gtdapp.model.TaskContract;
  * 'activated' state upon selection. This helps indicate which item is
  * currently being viewed in a {@link TaskDetailFragment}.
  * <p>
- * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
 public class TaskListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -37,18 +37,14 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
 
     public static final String ARG_CATEGORY = "category";
 
-    /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
-     */
-    private Callbacks mCallbacks = sDummyCallbacks;
+
 
     /**
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
-    private SimpleCursorAdapter listAdapter;
+    private TaskItemAdapter listAdapter;
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -65,7 +61,7 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
                 },
                 TaskContract.TasksColumns.CATEGORY + " = ?",
                 new String[] {category},
-                TaskContract.TasksColumns.TITLE + " ASC");
+                TaskContract.TasksColumns.STATE + " ASC, " + TaskContract.TasksColumns.FINISHED_TS + " DESC, " + TaskContract.TasksColumns.TITLE + " ASC");
     }
 
     @Override
@@ -78,27 +74,6 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
         listAdapter.swapCursor(null);
     }
 
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
-    public interface Callbacks {
-        /**
-         * Callback for when an item has been selected.
-         */
-        public void onItemSelected(long id);
-    }
-
-    /**
-     * A dummy implementation of the {@link Callbacks} interface that does
-     * nothing. Used only when this fragment is not attached to an activity.
-     */
-    private static Callbacks sDummyCallbacks = new Callbacks() {
-        @Override
-        public void onItemSelected(long id) {
-        }
-    };
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -111,22 +86,8 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String[] from =  new String[] {
-                TaskContract.TasksColumns.TITLE
-        };
-
-        int[] to = new int[] {
-                R.id.task_title
-        };
-
-        listAdapter = new SimpleCursorAdapter(
-                getActivity(),
-                R.layout.activity_task_list_item,
-                null,
-                from,
-                to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
-        );
+        listAdapter = new TaskItemAdapter(getActivity(), null, false);
+        listAdapter.setCallbacksListener((TaskItemAdapter.Callbacks) getActivity());
 
         setListAdapter(listAdapter);
 
@@ -144,11 +105,11 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
         super.onAttach(activity);
 
         // Activities containing this fragment must implement its callbacks.
-        if (!(activity instanceof Callbacks)) {
+        if (!(activity instanceof TaskItemAdapter.Callbacks)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
 
-        mCallbacks = (Callbacks) activity;
+
     }
 
     @Override
@@ -156,17 +117,9 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
         super.onDetach();
 
         // Reset the active callbacks interface to the dummy implementation.
-        mCallbacks = sDummyCallbacks;
+        listAdapter.setCallbacksListener(null);
     }
 
-    @Override
-    public void onListItemClick(ListView listView, View view, int position, long id) {
-        super.onListItemClick(listView, view, position, id);
-
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(listView.getAdapter().getItemId(position));
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -187,6 +140,12 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
         getListView().setChoiceMode(activateOnItemClick
                 ? ListView.CHOICE_MODE_SINGLE
                 : ListView.CHOICE_MODE_NONE);
+    }
+
+    public void onCheckboxClicked(View view) {
+        // Is the view now checked?
+        boolean checked = ((CheckBox) view).isChecked();
+//        mCallbacks.onItemChecked(getListAdapter()., checked);
     }
 
     private void setActivatedPosition(int position) {

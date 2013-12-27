@@ -21,6 +21,7 @@ public class TasksDbHelper extends SQLiteOpenHelper {
     public static final String COL_TITLE = "title";
     public static final String COL_CATEGORY = "category";
     public static final String COL_STATE = "state";
+    public static final String COL_FINISHED_TS = "finished_ts";
 
     private static final int VERSION = 1;
 
@@ -39,8 +40,9 @@ public class TasksDbHelper extends SQLiteOpenHelper {
                         + COL_TITLE + " text,"
                         + COL_CATEGORY + " string,"
                         + COL_STATE + " integer DEFAULT 0,"
-                        + COL_REMOTE_ID + " string UNIQUE" +
-                        ")");
+                        + COL_REMOTE_ID + " string UNIQUE,"
+                        + COL_FINISHED_TS + " text DEFAULT null"
+                        + ")");
 
         ContentValues values = new ContentValues();
         values.put(COL_TITLE, "in next category");

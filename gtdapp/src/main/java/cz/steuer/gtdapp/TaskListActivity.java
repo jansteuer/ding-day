@@ -1,14 +1,16 @@
 package cz.steuer.gtdapp;
 
 import android.app.ActionBar;
+import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -30,11 +32,11 @@ import cz.steuer.gtdapp.model.TaskContract;
  * (if present) is a {@link TaskDetailFragment}.
  * <p>
  * This activity also implements the required
- * {@link TaskListFragment.Callbacks} interface
+ * {@link TaskItemAdapter.Callbacks} interface
  * to listen for item selections.
  */
 public class TaskListActivity extends FragmentActivity
-        implements TaskListFragment.Callbacks, MenuFragment.Callbacks {
+        implements TaskItemAdapter.Callbacks, MenuFragment.Callbacks {
 
     private static final String TAG_FRAGMENT_TASKS = "task_list";
     public static final String ARG_TASK_CATEGORY = "task_category";
@@ -122,7 +124,7 @@ public class TaskListActivity extends FragmentActivity
     }
 
     /**
-     * Callback method from {@link TaskListFragment.Callbacks}
+     * Callback method from {@link TaskItemAdapter.Callbacks}
      * indicating that the item with the given ID was selected.
      */
     @Override
@@ -151,6 +153,17 @@ public class TaskListActivity extends FragmentActivity
     }
 
     @Override
+    public void onItemChecked(long id, boolean checked) {
+        Uri taskUri = Uri.withAppendedPath(TaskContract.Tasks.CONTENT_URI, Long.toString(id));
+        ContentValues values = new ContentValues();
+        values.put(TaskContract.TasksColumns.STATE, checked ? TaskContract.Tasks.STATE_DONE : TaskContract.Tasks.STATE_NOT_DONE);
+
+        AsyncTask task = new UpdateTask3(this, taskUri, values);
+        task.execute("");
+
+    }
+
+    @Override
     public void onCategorySelected(TaskCategory category) {
         this.currentCategory = category;
 
@@ -170,5 +183,24 @@ public class TaskListActivity extends FragmentActivity
             menu.showContent(true);
         }
 
+    }
+
+    private static final class UpdateTask3 extends AsyncTask<Object, Void, Uri> {
+        Activity activity;
+        Uri uri;
+        ContentValues values;
+
+        public UpdateTask3(Activity activity, Uri uri, ContentValues values) {
+            this.activity = activity;
+            this.uri = uri;
+            this.values = values;
+        }
+
+
+        @Override
+        protected Uri doInBackground(Object... params) {
+            activity.getContentResolver().update(uri, values, null, null);
+            return uri;
+        }
     }
 }

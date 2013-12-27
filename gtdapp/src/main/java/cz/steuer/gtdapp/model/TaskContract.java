@@ -87,6 +87,7 @@ public class TaskContract {
         public static final String TITLE = "title"; //string
         public static final String STATE = "state"; //int
         public static final String CATEGORY = "category"; //string
+        public static final String FINISHED_TS = "finished_ts"; //date
 
     }
 
