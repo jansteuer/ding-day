@@ -1,6 +1,5 @@
 package cz.steuer.gtdapp;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -20,146 +19,100 @@ import android.widget.Scroller;
 
 public class MenuLayout extends LinearLayout {
 
+    private enum MenuState {
+        HIDING, HIDDEN, SHOWING, SHOWN,
+    }
+
+    // Make scrolling more natural. Move more quickly at the end
+    // See the formula here http://cyrilmottier.com/2012/05/22/the-making-of-prixing-fly-in-app-mMenu-part-1/
+    protected class EaseInInterpolator implements Interpolator {
+        @Override
+        public float getInterpolation(float t) {
+            return (float) Math.pow(t-1, 5) + 1;
+        }
+    }
+
+    protected class MenuRunnable implements Runnable {
+        @Override
+        public void run() {
+            boolean isScrolling = mMenuScroller.computeScrollOffset();
+            adjustContentPosition(isScrolling);
+        }
+    }
+
     private static final String TAG = "MenuLayout";
     private static final boolean DEBUG = true;
 
-    // Duration of sliding animation, in miliseconds
-    private static final int SLIDING_DURATION = 500;
+    private static final int SLIDING_DURATION = 500; //miliseconds
+    private static final int QUERY_INTERVAL = 16; //miliseconds
+    private static final int MARGIN_WIDTH = 30; //pixels
 
-    // Query Scroller every 16 miliseconds
-    private static final int QUERY_INTERVAL = 16;
-
-    private static final int MARGIN_WIDTH = 30;
-
-    // MainLayout width
-//    int mMainLayoutWidth;
-
-    // Sliding mMenu
-    private View mMenu;
-
-    // Main mContent
     private View mContent;
+    private View mMenu = null;
 
-    // mMenu does not occupy some right space
-    // This should be updated correctly later in onMeasure
-    private static int mMenuRightMargin = 150;
+    private static int mMenuRightMargin = 150; //pixels
 
-    // The state of mMenu
-    private enum MenuState {
-        HIDING,
-        HIDDEN,
-        SHOWING,
-        SHOWN,
-    };
+    private MenuState mCurMenuState = MenuState.HIDDEN;
+    private int mCurContentXOffset; //pixels
+    boolean mIsDragging = false;
 
-    // mContent will be layouted based on this X offset
-    // Normally, mContentXOffset = mMenu.getLayoutParams().width = this.getWidth - mMenuRightMargin
-    private int mContentXOffset;
-
-    // mMenu is hidden initially
-    private MenuState mCurrentMenuState = MenuState.HIDDEN;
-
-    // Scroller is used to facilitate animation
-    private Scroller mMenuScroller = new Scroller(this.getContext(),
-            new EaseInInterpolator());
-
-    // Used to query Scroller about scrolling position
-    // Note: The 3rd paramter to startScroll is the distance
+    private Scroller mMenuScroller = new Scroller(getContext(), new EaseInInterpolator());
     private Runnable mMenuRunnable = new MenuRunnable();
     private Handler mMenuHandler = new Handler();
 
-    // Previous touch position
     int mPrevX = 0;
-
-    // Is user dragging the mContent
-    boolean mIsDragging = false;
-
-    // Used to facilitate ACTION_UP 
     int mLastDiffX = 0;
 
-
-    // 3 parameters constructor seems to be unavailable in 2.3
-    public MenuLayout(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        makeWindow();
+    public MenuLayout(Activity activity, int menuResource, AttributeSet attrs, int defStyle) {
+        super(activity, attrs, defStyle);
+        makeAsToplevel(activity);
+        setMenu(menuResource);
     }
 
-//    public MenuLayout(Context context, AttributeSet attrs) {
-//        super(context, attrs);
-//    }
+    public MenuLayout(Activity activity, int menuResource, AttributeSet attrs) {
+        super(activity, attrs);
+        makeAsToplevel(activity);
+        setMenu(menuResource);
+    }
 
-    public MenuLayout(Activity activity) {
+    public MenuLayout(Activity activity, int menuResource) {
         super(activity);
+        makeAsToplevel(activity);
+        setMenu(menuResource);
+    }
 
-        makeWindow();
+    /**
+     * Make as direct child of Window.
+     * It's done that way because we want to slide action bar when displaying menu.
+     */
+    private void makeAsToplevel(Activity activity) {
+        TypedArray a = activity.getTheme().obtainStyledAttributes(new int[] {android.R.attr.windowBackground});
+        int background = a.getResourceId(0, 0);
+        a.recycle();
 
+        ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
+        ViewGroup decorChild = (ViewGroup) decor.getChildAt(0);
 
-        // Get our 2 child View
-//        mMenu = this.getChildAt(0);
-//        mContent = this.getChildAt(1);
+        decorChild.setBackgroundResource(background);
+        decor.removeView(decorChild);
+        decor.addView(this);
+        this.addView(decorChild);
 
-        // Attach View.OnTouchListener
-        this.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return MenuLayout.this.onContentTouch(v, event);
-            }
-        });
-
-        // Initially hide the mMenu
-//        mMenu.setVisibility(View.GONE);
+        this.mContent = decorChild;
     }
 
     public View getMenu() {
         return mMenu;
-
     }
 
     public View getContent() {
         return mContent;
     }
 
-    public void setMenu(int layoutId) {
-        this.mMenu = LayoutInflater.from(getContext()).inflate(layoutId, null);
-        this.addView(this.mMenu, 0);
+    private void setMenu(int resourceId) {
+        mMenu = LayoutInflater.from(getContext()).inflate(resourceId, null);
+        addView(mMenu, 0);
         mMenu.setVisibility(View.GONE);
-
-        this.forceLayout();
-    }
-
-//    // Overriding LinearLayout core methods
-//
-//    // Ask all children to measure themselves and compute the measurement of this
-//    // layout based on the children
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-//
-//        mMainLayoutWidth = MeasureSpec.getSize(widthMeasureSpec);
-//
-//    }
-
-    public void makeWindow() {
-        Activity activity = (Activity) getContext();
-
-
-        TypedArray a = activity.getTheme().obtainStyledAttributes(new int[] {android.R.attr.windowBackground});
-        int background = a.getResourceId(0, 0);
-        a.recycle();
-
-
-        ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
-        ViewGroup decorChild = (ViewGroup) decor.getChildAt(0);
-        // save ActionBar themes that have transparent assets
-        decorChild.setBackgroundResource(background);
-
-
-        decor.removeView(decorChild);
-        decor.addView(this);
-//        this.addView(new TextView(activity));
-        this.addView(decorChild);
-        this.mContent = decorChild;
-//        setContent(decorChild);
     }
 
     @Override
@@ -169,8 +122,6 @@ public class MenuLayout extends LinearLayout {
         int nTop = getPaddingTop() + top;
         int nBottom = getPaddingBottom() + bottom;
 
-        // True if MainLayout 's size and position has changed
-        // If true, calculate child views size
         if(changed) {
             mMenuRightMargin = getWidth() * 30 / 100;
 
@@ -183,17 +134,14 @@ public class MenuLayout extends LinearLayout {
             LayoutParams menuLayoutParams = (LayoutParams) mMenu.getLayoutParams();
             menuLayoutParams.height = this.getHeight();
             menuLayoutParams.width = this.getWidth() - mMenuRightMargin;
-
         }
 
-        // Layout the child views
         mMenu.layout(nLeft, nTop, nRight - mMenuRightMargin, nBottom);
-        mContent.layout(nLeft + mContentXOffset, nTop, nRight + mContentXOffset, nBottom);
-
+        mContent.layout(nLeft + mCurContentXOffset, nTop, nRight + mCurContentXOffset, nBottom);
     }
 
     public void toggleMenu() {
-        switch(mCurrentMenuState) {
+        switch(mCurMenuState) {
             case HIDDEN:
                showMenu();
                 break;
@@ -204,8 +152,8 @@ public class MenuLayout extends LinearLayout {
     }
 
     public void showMenu() {
-        if(mCurrentMenuState == MenuState.HIDDEN) {
-            mCurrentMenuState = MenuState.SHOWING;
+        if(mCurMenuState == MenuState.HIDDEN) {
+            mCurMenuState = MenuState.SHOWING;
             mMenu.setVisibility(View.VISIBLE);
             mMenuScroller.startScroll(0, 0, mMenu.getLayoutParams().width, 0, SLIDING_DURATION);
             mMenuHandler.postDelayed(mMenuRunnable, QUERY_INTERVAL);
@@ -214,25 +162,16 @@ public class MenuLayout extends LinearLayout {
     }
 
     public void hideMenu() {
-        if(mCurrentMenuState == MenuState.SHOWN) {
-            mCurrentMenuState = MenuState.HIDING;
-            mMenuScroller.startScroll(mContentXOffset, 0, -mContentXOffset, 0, SLIDING_DURATION);
+        if(mCurMenuState == MenuState.SHOWN) {
+            mCurMenuState = MenuState.HIDING;
+            mMenuScroller.startScroll(mCurContentXOffset, 0, -mCurContentXOffset, 0, SLIDING_DURATION);
             mMenuHandler.postDelayed(mMenuRunnable, QUERY_INTERVAL);
             this.invalidate();
         }
     }
 
     public boolean isMenuShown() {
-        return mCurrentMenuState == MenuState.SHOWN;
-    }
-
-    // Query Scroller
-    protected class MenuRunnable implements Runnable {
-        @Override
-        public void run() {
-            boolean isScrolling = mMenuScroller.computeScrollOffset();
-            adjustContentPosition(isScrolling);
-        }
+        return mCurMenuState == MenuState.SHOWN;
     }
 
     // Adjust mContent View position to match sliding animation
@@ -242,9 +181,9 @@ public class MenuLayout extends LinearLayout {
         //Log.d("MainLayout.java adjustContentPosition()", "scrollerOffset " + scrollerOffset);
 
         // Translate mContent View accordingly
-        mContent.offsetLeftAndRight(scrollerXOffset - mContentXOffset);
+        mContent.offsetLeftAndRight(scrollerXOffset - mCurContentXOffset);
 
-        mContentXOffset = scrollerXOffset;
+        mCurContentXOffset = scrollerXOffset;
 
         // Invalite this whole MainLayout, causing onLayout() to be called
         this.invalidate();
@@ -258,12 +197,12 @@ public class MenuLayout extends LinearLayout {
 
     // Called when sliding is complete
     private void onMenuSlidingComplete() {
-        switch (mCurrentMenuState) {
+        switch (mCurMenuState) {
             case SHOWING:
-                mCurrentMenuState = MenuState.SHOWN;
+                mCurMenuState = MenuState.SHOWN;
                 break;
             case HIDING:
-                mCurrentMenuState = MenuState.HIDDEN;
+                mCurMenuState = MenuState.HIDDEN;
                 mMenu.setVisibility(View.GONE);
                 break;
             default:
@@ -271,26 +210,16 @@ public class MenuLayout extends LinearLayout {
         }
     }
 
-    // Make scrolling more natural. Move more quickly at the end
-    // See the formula here http://cyrilmottier.com/2012/05/22/the-making-of-prixing-fly-in-app-mMenu-part-1/
-    protected class EaseInInterpolator implements Interpolator {
-        @Override
-        public float getInterpolation(float t) {
-            return (float)Math.pow(t-1, 5) + 1;
-        }
-
-    }
-
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
         int curX = (int) ev.getRawX();
 
-        if(mCurrentMenuState == MenuState.HIDING || mCurrentMenuState == MenuState.SHOWING) {
+        if(mCurMenuState == MenuState.HIDING || mCurMenuState == MenuState.SHOWING) {
             return true;
         }
 
-        if(mCurrentMenuState == MenuState.SHOWN && curX > mContentXOffset) {
+        if(mCurMenuState == MenuState.SHOWN && curX > mCurContentXOffset) {
             return true;
         }
 
@@ -299,7 +228,7 @@ public class MenuLayout extends LinearLayout {
             return true;
         }
 
-        if(mCurrentMenuState == MenuState.HIDDEN && curX <= MARGIN_WIDTH) {
+        if(mCurMenuState == MenuState.HIDDEN && curX <= MARGIN_WIDTH) {
             return true;
         }
 
@@ -307,12 +236,11 @@ public class MenuLayout extends LinearLayout {
     }
 
 
-
-    // Handle touch event on mContent View
-    public boolean onContentTouch(View v, MotionEvent event) {
-        System.out.println(mContentXOffset);
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        System.out.println(mCurContentXOffset);
         // Do nothing if sliding is in progress
-        if(mCurrentMenuState == MenuState.HIDING || mCurrentMenuState == MenuState.SHOWING)
+        if(mCurMenuState == MenuState.HIDING || mCurMenuState == MenuState.SHOWING)
             return false;
 
         // getRawX returns X touch point corresponding to screen
@@ -322,7 +250,7 @@ public class MenuLayout extends LinearLayout {
 
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(mCurrentMenuState == MenuState.SHOWN && curX < this.mContentXOffset) {
+                if(mCurMenuState == MenuState.SHOWN && curX < this.mCurContentXOffset) {
                     return false;
                 }
 
@@ -343,19 +271,19 @@ public class MenuLayout extends LinearLayout {
                 diffX = curX - mPrevX;
 
                 // Prevent user from dragging beyond border
-                if(mContentXOffset + diffX <= 0) {
+                if(mCurContentXOffset + diffX <= 0) {
                     // Don't allow dragging beyond left border
-                    // Use diffX will make mContent cross the border, so only translate by -mContentXOffset
-                    diffX = -mContentXOffset;
-                } else if(mContentXOffset + diffX > getWidth() - mMenuRightMargin) {
+                    // Use diffX will make mContent cross the border, so only translate by -mCurContentXOffset
+                    diffX = -mCurContentXOffset;
+                } else if(mCurContentXOffset + diffX > getWidth() - mMenuRightMargin) {
                     // Don't allow dragging beyond mMenu width
-                    diffX = getWidth() - mMenuRightMargin - mContentXOffset;
+                    diffX = getWidth() - mMenuRightMargin - mCurContentXOffset;
                 }
 
                 // Translate mContent View accordingly
                 mContent.offsetLeftAndRight(diffX);
 
-                mContentXOffset += diffX;
+                mCurContentXOffset += diffX;
 
                 // Invalite this whole MainLayout, causing onLayout() to be called
                 this.invalidate();
@@ -371,22 +299,22 @@ public class MenuLayout extends LinearLayout {
 
                 // Start scrolling
                 // Remember that when mContent has a chance to cross left border, mLastDiffX is set to 0
-                if(mLastDiffX > 0 || (mLastDiffX == 0 && mIsDragging && mCurrentMenuState == MenuState.HIDDEN)) {
+                if(mLastDiffX > 0 || (mLastDiffX == 0 && mIsDragging && mCurMenuState == MenuState.HIDDEN)) {
                     // User wants to show mMenu
-                    mCurrentMenuState = MenuState.SHOWING;
+                    mCurMenuState = MenuState.SHOWING;
 
                     // No need to set to Visible, because we have set to Visible in ACTION_MOVE
                     //mMenu.setVisibility(View.VISIBLE);
 
-                    //Log.d("MainLayout.java onContentTouch()", "Up mContentXOffset " + mContentXOffset);
+                    //Log.d("MainLayout.java onContentTouch()", "Up mCurContentXOffset " + mCurContentXOffset);
 
-                    // Start scrolling from mContentXOffset
-                    mMenuScroller.startScroll(mContentXOffset, 0, mMenu.getLayoutParams().width - mContentXOffset,
+                    // Start scrolling from mCurContentXOffset
+                    mMenuScroller.startScroll(mCurContentXOffset, 0, mMenu.getLayoutParams().width - mCurContentXOffset,
                             0, SLIDING_DURATION);
-                } else if(mLastDiffX < 0 || (mLastDiffX == 0 && mCurrentMenuState == MenuState.SHOWN)) {
+                } else if(mLastDiffX < 0 || (mLastDiffX == 0 && mCurMenuState == MenuState.SHOWN)) {
                     // User wants to hide mMenu
-                    mCurrentMenuState = MenuState.HIDING;
-                    mMenuScroller.startScroll(mContentXOffset, 0, -mContentXOffset,
+                    mCurMenuState = MenuState.HIDING;
+                    mMenuScroller.startScroll(mCurContentXOffset, 0, -mCurContentXOffset,
                             0, SLIDING_DURATION);
                 }
 
