@@ -3,11 +3,15 @@ package cz.steuer.gtdapp;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.app.LoaderManager;
+import android.content.ClipData;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
@@ -97,8 +101,29 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
             args.putString(ARG_CATEGORY, TaskCategory.NEXT.toString());
         }
         getLoaderManager().initLoader(LOADER_ID, args, this);
+
+
     }
 
+    @Override
+    public void onViewCreated (View view, Bundle savedInstanceState) {
+
+        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                ClipData clipData = ClipData.newPlainText("Task", Long.toString(id));
+                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+
+
+                parent.startDrag(clipData, shadowBuilder, parent, 0);
+
+
+                return true;
+            }
+        }
+        );
+
+    }
 
     @Override
     public void onAttach(Activity activity) {

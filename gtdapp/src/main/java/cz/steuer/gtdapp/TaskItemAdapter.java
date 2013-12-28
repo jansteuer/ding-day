@@ -35,6 +35,8 @@ public class TaskItemAdapter extends CursorAdapter {
         public void onItemSelected(long id);
 
         public void onItemChecked(long id, boolean checked);
+
+        public void onItemDragStarted(long id, View view);
     }
 
     /**
@@ -48,8 +50,13 @@ public class TaskItemAdapter extends CursorAdapter {
 
         @Override
         public void onItemChecked(long id, boolean checked) {
+        }
+
+        @Override
+        public void onItemDragStarted(long id, View view) {
 
         }
+
     };
 
     public void setCallbacksListener(TaskItemAdapter.Callbacks listener) {
@@ -79,6 +86,15 @@ public class TaskItemAdapter extends CursorAdapter {
             public void onClick(View v) {
                 ViewHolder holder = (ViewHolder) v.getTag();
                 mCallbacks.onItemSelected(holder.id);
+            }
+        });
+
+        rootLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                ViewHolder holder = (ViewHolder) v.getTag();
+                mCallbacks.onItemDragStarted(holder.id, v);
+                return true;
             }
         });
 
