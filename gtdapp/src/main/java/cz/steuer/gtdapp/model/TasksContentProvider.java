@@ -207,10 +207,12 @@ public class TasksContentProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unrecognized URI: " + uri);
         }
 
-        if(TaskContract.Tasks.STATE_DONE == values.getAsInteger(TaskContract.TasksColumns.STATE)) {
-            values.put(TaskContract.TasksColumns.FINISHED_TS, iso8601Format.format(new Date()));
-        } else if(TaskContract.Tasks.STATE_NOT_DONE == values.getAsInteger(TaskContract.TasksColumns.STATE)) {
-            values.putNull(TaskContract.TasksColumns.FINISHED_TS);
+        if(values.containsKey(TaskContract.TasksColumns.STATE)) {
+            if(TaskContract.Tasks.STATE_DONE == values.getAsInteger(TaskContract.TasksColumns.STATE)) {
+                values.put(TaskContract.TasksColumns.FINISHED_TS, iso8601Format.format(new Date()));
+            } else if(TaskContract.Tasks.STATE_NOT_DONE == values.getAsInteger(TaskContract.TasksColumns.STATE)) {
+                values.putNull(TaskContract.TasksColumns.FINISHED_TS);
+            }
         }
 
         values = colMap.translateCols(values);

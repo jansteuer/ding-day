@@ -99,9 +99,9 @@ public class TaskListActivity extends Activity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((TaskListFragment) getFragmentManager()
-                    .findFragmentById(R.id.task_list))
-                    .setActivateOnItemClick(true);
+//            ((TaskListFragment) getFragmentManager()
+//                    .findFragmentById(R.id.task_list))
+//                    .setActivateOnItemClick(true);
         }
 
 //        menuLayout.makeAsWindowChild(R.id.menu_fragment);
@@ -125,10 +125,10 @@ public class TaskListActivity extends Activity
                             break;
                         case DragEvent.ACTION_DRAG_EXITED:
                             System.err.println("behind view exited");
+                            menuLayout.hideMenu(false);
                             break;
                         case DragEvent.ACTION_DRAG_ENDED:
 
-                            menuLayout.hideMenu();
                             break;
                     }
                     return true;
@@ -142,7 +142,7 @@ public class TaskListActivity extends Activity
 
                     switch(event.getAction()) {
                         case DragEvent.ACTION_DRAG_STARTED:
-                            menuLayout.showMenu();
+                            menuLayout.peepMenu();
                             if(!"Task".equals(event.getClipDescription().getLabel())) {
                                 return false;
                             }

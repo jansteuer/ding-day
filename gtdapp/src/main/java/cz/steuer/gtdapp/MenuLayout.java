@@ -20,7 +20,7 @@ import android.widget.Scroller;
 public class MenuLayout extends LinearLayout {
 
     private enum MenuState {
-        HIDING, HIDDEN, SHOWING, SHOWN,
+        HIDING, HIDDEN, SHOWING, SHOWN, PEEPED
     }
 
     // Make scrolling more natural. Move more quickly at the end
@@ -50,11 +50,13 @@ public class MenuLayout extends LinearLayout {
     private View mContent;
     private View mMenu = null;
 
-    private static int mMenuRightMargin = 150; //pixels
+    private int mMenuRightMargin = 150; //pixels
+    private int mMenuPeepWidth = 50; //pixels
 
     private MenuState mCurMenuState = MenuState.HIDDEN;
     private int mCurContentXOffset; //pixels
-    boolean mIsDragging = false;
+    private boolean mIsDragging = false;
+    private boolean mIsPeeped = false;
 
     private Scroller mMenuScroller = new Scroller(getContext(), new EaseInInterpolator());
     private Runnable mMenuRunnable = new MenuRunnable();
@@ -151,20 +153,43 @@ public class MenuLayout extends LinearLayout {
         }
     }
 
-    public void showMenu() {
+    public void peepMenu() {
         if(mCurMenuState == MenuState.HIDDEN) {
+            mIsPeeped = true;
+            mMenu.setVisibility(View.VISIBLE);
+            mMenuScroller.startScroll(0, 0, mMenuPeepWidth, 0, SLIDING_DURATION);
+            mMenuHandler.postDelayed(mMenuRunnable, QUERY_INTERVAL);
+            this.invalidate();
+        }
+    }
+
+    public void showMenu() {
+
+        if(mCurMenuState == MenuState.HIDDEN || mCurMenuState == MenuState.PEEPED) {
+            int startX = (mCurMenuState == MenuState.HIDDEN) ? 0 : mMenuPeepWidth;
             mCurMenuState = MenuState.SHOWING;
             mMenu.setVisibility(View.VISIBLE);
-            mMenuScroller.startScroll(0, 0, mMenu.getLayoutParams().width, 0, SLIDING_DURATION);
+            mMenuScroller.startScroll(startX, 0, mMenu.getLayoutParams().width - startX, 0, SLIDING_DURATION);
             mMenuHandler.postDelayed(mMenuRunnable, QUERY_INTERVAL);
             this.invalidate();
         }
     }
 
     public void hideMenu() {
-        if(mCurMenuState == MenuState.SHOWN) {
+        hideMenu(true);
+    }
+
+    public void hideMenu(boolean force) {
+        if(mCurMenuState == MenuState.SHOWN || (force && mCurMenuState == MenuState.PEEPED)) {
+            int distance = -mCurContentXOffset;
+            if(!force && mIsPeeped) {
+                distance += mMenuPeepWidth;
+            } else {
+                mIsPeeped = false;
+            }
+
             mCurMenuState = MenuState.HIDING;
-            mMenuScroller.startScroll(mCurContentXOffset, 0, -mCurContentXOffset, 0, SLIDING_DURATION);
+            mMenuScroller.startScroll(mCurContentXOffset, 0, distance, 0, SLIDING_DURATION);
             mMenuHandler.postDelayed(mMenuRunnable, QUERY_INTERVAL);
             this.invalidate();
         }
@@ -199,11 +224,19 @@ public class MenuLayout extends LinearLayout {
     private void onMenuSlidingComplete() {
         switch (mCurMenuState) {
             case SHOWING:
-                mCurMenuState = MenuState.SHOWN;
+                if(mCurContentXOffset == mMenuPeepWidth) {
+                    mCurMenuState = MenuState.PEEPED;
+                } else {
+                    mCurMenuState = MenuState.SHOWN;
+                }
                 break;
             case HIDING:
-                mCurMenuState = MenuState.HIDDEN;
-                mMenu.setVisibility(View.GONE);
+                if(mCurContentXOffset > 0) {
+                    mCurMenuState = MenuState.PEEPED;
+                } else {
+                    mCurMenuState = MenuState.HIDDEN;
+                    mMenu.setVisibility(View.GONE);
+                }
                 break;
             default:
                 return;

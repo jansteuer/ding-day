@@ -114,15 +114,10 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
                 ClipData clipData = ClipData.newPlainText("Task", Long.toString(id));
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 
-
                 parent.startDrag(clipData, shadowBuilder, parent, 0);
-
-
                 return true;
             }
-        }
-        );
-
+        });
     }
 
     @Override
@@ -155,31 +150,6 @@ public class TaskListFragment extends ListFragment implements LoaderManager.Load
         }
     }
 
-    /**
-     * Turns on activate-on-click mode. When this mode is on, list items will be
-     * given the 'activated' state when touched.
-     */
-    public void setActivateOnItemClick(boolean activateOnItemClick) {
-        // When setting CHOICE_MODE_SINGLE, ListView will automatically
-        // give items the 'activated' state when touched.
-        getListView().setChoiceMode(activateOnItemClick
-                ? ListView.CHOICE_MODE_SINGLE
-                : ListView.CHOICE_MODE_NONE);
-    }
 
-    public void onCheckboxClicked(View view) {
-        // Is the view now checked?
-        boolean checked = ((CheckBox) view).isChecked();
-//        mCallbacks.onItemChecked(getListAdapter()., checked);
-    }
 
-    private void setActivatedPosition(int position) {
-        if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
-        } else {
-            getListView().setItemChecked(position, true);
-        }
-
-        mActivatedPosition = position;
-    }
 }

@@ -2,15 +2,20 @@ package cz.steuer.gtdapp;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentValues;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import cz.steuer.gtdapp.enums.TaskCategory;
+import cz.steuer.gtdapp.model.TaskContract;
 
-public class MenuFragment  extends Fragment implements View.OnClickListener {
+public class MenuFragment  extends Fragment implements View.OnClickListener, View.OnDragListener {
 
     /**
      * The fragment's current callback object, which is notified of list item
@@ -36,6 +41,69 @@ public class MenuFragment  extends Fragment implements View.OnClickListener {
             mCallbacks.onCategorySelected(TaskCategory.WAITING);
         } else if(v == mButtonSuspended) {
             mCallbacks.onCategorySelected(TaskCategory.SUSPENDED);
+        }
+    }
+
+    @Override
+    public boolean onDrag(View v, DragEvent event) {
+        switch(event.getAction()) {
+            case DragEvent.ACTION_DRAG_STARTED:
+                if(!"Task".equals(event.getClipDescription().getLabel())) {
+                    return false;
+                }
+                break;
+            case DragEvent.ACTION_DRAG_ENTERED:
+                System.err.println("button entered");
+                break;
+            case DragEvent.ACTION_DRAG_EXITED:
+                System.err.println("button exited");
+                break;
+            case DragEvent.ACTION_DRAG_ENDED:
+                break;
+            case DragEvent.ACTION_DROP:
+                TaskCategory category;
+
+                if(v == mButtonNext) {
+                    category = TaskCategory.NEXT;
+                } else if(v == mButtonCalendar) {
+                    category = TaskCategory.SCHEDULED;
+                } else if(v == mButtonWaiting) {
+                    category = TaskCategory.WAITING;
+                } else if(v == mButtonSuspended) {
+                    category = TaskCategory.SUSPENDED;
+                } else {
+                    category = TaskCategory.INBOX;
+                }
+
+
+
+                ContentValues values = new ContentValues();
+                values.put(TaskContract.TasksColumns.CATEGORY, category.toString());
+
+                Uri taskUri = Uri.withAppendedPath(TaskContract.Tasks.CONTENT_URI, event.getClipData().getItemAt(0).getText().toString());
+                AsyncTask task = new UpdateTask3(getActivity(), taskUri, values);
+                task.execute("");
+                break;
+        }
+        return true;
+    }
+
+    private static final class UpdateTask3 extends AsyncTask<Object, Void, Uri> {
+        Activity activity;
+        Uri uri;
+        ContentValues values;
+
+        public UpdateTask3(Activity activity, Uri uri, ContentValues values) {
+            this.activity = activity;
+            this.uri = uri;
+            this.values = values;
+        }
+
+
+        @Override
+        protected Uri doInBackground(Object... params) {
+            activity.getContentResolver().update(uri, values, null, null);
+            return uri;
         }
     }
 
@@ -107,6 +175,12 @@ public class MenuFragment  extends Fragment implements View.OnClickListener {
         mButtonCalendar.setOnClickListener(this);
         mButtonWaiting.setOnClickListener(this);
         mButtonSuspended.setOnClickListener(this);
+
+        mButtonInbox.setOnDragListener(this);
+        mButtonNext.setOnDragListener(this);
+        mButtonCalendar.setOnDragListener(this);
+        mButtonWaiting.setOnDragListener(this);
+        mButtonSuspended.setOnDragListener(this);
         return rootView;
     }
 }
