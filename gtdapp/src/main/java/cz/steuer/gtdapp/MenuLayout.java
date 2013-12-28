@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,11 +24,16 @@ import android.widget.TextView;
 // The menu stays still
 public class MenuLayout extends LinearLayout {
 
+    public static final String TAG = "MenuLayout";
+    public static final boolean DEBUG = true;
+
     // Duration of sliding animation, in miliseconds
     private static final int SLIDING_DURATION = 500;
 
     // Query Scroller every 16 miliseconds
     private static final int QUERY_INTERVAL = 16;
+
+    private static final int MARGIN_WIDTH = 30;
 
     // MainLayout width
     int mainLayoutWidth;
@@ -107,7 +113,7 @@ public class MenuLayout extends LinearLayout {
 //        content = this.getChildAt(1);
 
         // Attach View.OnTouchListener
-        content.setOnTouchListener(new OnTouchListener() {
+        this.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return MenuLayout.this.onContentTouch(v, event);
@@ -318,6 +324,33 @@ public class MenuLayout extends LinearLayout {
         return currentMenuState == MenuState.SHOWN;
     }
 
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        final int action = MotionEventCompat.getActionMasked(ev);
+        int curX = (int) ev.getRawX();
+
+        if(currentMenuState == MenuState.HIDING || currentMenuState == MenuState.SHOWING) {
+            return true;
+        }
+
+        if(currentMenuState == MenuState.SHOWN && curX > contentXOffset) {
+            return true;
+        }
+
+
+        if(isDragging) {
+            return true;
+        }
+
+        if(currentMenuState == MenuState.HIDDEN && curX <= MARGIN_WIDTH) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+
     // Handle touch event on content View
     public boolean onContentTouch(View v, MotionEvent event) {
         // Do nothing if sliding is in progress
@@ -326,18 +359,21 @@ public class MenuLayout extends LinearLayout {
 
         // getRawX returns X touch point corresponding to screen
         // getX sometimes returns screen X, sometimes returns content View X
-        int curX = (int)event.getRawX();
+        int curX = (int) event.getRawX();
         int diffX = 0;
 
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                //Log.d("MainLayout.java onContentTouch()", "Down x " + curX);
+                if(currentMenuState == MenuState.SHOWN && curX < this.contentXOffset) {
+                    return false;
+                }
 
+                if(DEBUG) Log.d(TAG, "Down x " + curX);
                 prevX = curX;
                 return true;
 
             case MotionEvent.ACTION_MOVE:
-                //Log.d("MainLayout.java onContentTouch()", "Move x " + curX);
+                if(DEBUG) Log.d(TAG, "Move x " + curX + " prev x " + prevX);
 
                 // Set menu to Visible when user start dragging the content View
                 if(!isDragging) {
@@ -377,7 +413,7 @@ public class MenuLayout extends LinearLayout {
 
                 // Start scrolling
                 // Remember that when content has a chance to cross left border, lastDiffX is set to 0
-                if(lastDiffX > 0) {
+                if(lastDiffX > 0 || (lastDiffX == 0 && isDragging && currentMenuState == MenuState.HIDDEN)) {
                     // User wants to show menu
                     currentMenuState = MenuState.SHOWING;
 
@@ -389,7 +425,7 @@ public class MenuLayout extends LinearLayout {
                     // Start scrolling from contentXOffset
                     menuScroller.startScroll(contentXOffset, 0, menu.getLayoutParams().width - contentXOffset,
                             0, SLIDING_DURATION);
-                } else if(lastDiffX < 0) {
+                } else if(lastDiffX < 0 || (lastDiffX == 0 && currentMenuState == MenuState.SHOWN)) {
                     // User wants to hide menu
                     currentMenuState = MenuState.HIDING;
                     menuScroller.startScroll(contentXOffset, 0, -contentXOffset,
