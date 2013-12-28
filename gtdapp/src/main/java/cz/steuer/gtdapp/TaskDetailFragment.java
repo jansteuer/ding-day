@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import cz.steuer.gtdapp.dummy.DummyContent;
 import cz.steuer.gtdapp.model.TaskContract;
 
 /**
@@ -28,10 +27,6 @@ public class TaskDetailFragment extends Fragment implements LoaderManager.Loader
      */
     public static final String ARG_ITEM_URI = "item_id";
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private DummyContent.DummyItem mItem;
 
     private static final int LOADER_ID = 58;
 

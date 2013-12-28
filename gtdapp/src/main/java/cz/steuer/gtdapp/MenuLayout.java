@@ -271,7 +271,6 @@ public class MenuLayout extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        System.out.println(mCurContentXOffset);
         // Do nothing if sliding is in progress
         if(mCurMenuState == MenuState.HIDING || mCurMenuState == MenuState.SHOWING)
             return false;
@@ -287,13 +286,10 @@ public class MenuLayout extends LinearLayout {
                     return false;
                 }
 
-                if(DEBUG) Log.d(TAG, "Down x " + curX);
                 mPrevX = curX;
                 return true;
 
             case MotionEvent.ACTION_MOVE:
-                if(DEBUG) Log.d(TAG, "Move x " + curX + " prev x " + mPrevX);
-
                 // Set mMenu to Visible when user start dragging the mContent View
                 if(!mIsDragging) {
                     mIsDragging = true;
@@ -326,10 +322,6 @@ public class MenuLayout extends LinearLayout {
                 return true;
 
             case MotionEvent.ACTION_UP:
-                //Log.d("MainLayout.java onContentTouch()", "Up x " + curX);
-
-                Log.d("MainLayout.java onContentTouch()", "Up mLastDiffX " + mLastDiffX);
-
                 // Start scrolling
                 // Remember that when mContent has a chance to cross left border, mLastDiffX is set to 0
                 if(mLastDiffX > 0 || (mLastDiffX == 0 && mIsDragging && mCurMenuState == MenuState.HIDDEN)) {

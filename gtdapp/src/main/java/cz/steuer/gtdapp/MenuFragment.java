@@ -29,6 +29,10 @@ public class MenuFragment  extends Fragment implements View.OnClickListener, Vie
     private Button mButtonWaiting;
     private Button mButtonSuspended;
 
+
+    public MenuFragment() {
+    }
+
     @Override
     public void onClick(View v) {
         if(v == mButtonInbox) {
@@ -127,18 +131,10 @@ public class MenuFragment  extends Fragment implements View.OnClickListener, Vie
         }
     };
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public MenuFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
 
     @Override
     public void onAttach(Activity activity) {

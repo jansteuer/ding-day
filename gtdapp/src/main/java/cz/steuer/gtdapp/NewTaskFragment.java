@@ -2,21 +2,12 @@ package cz.steuer.gtdapp;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
-import cz.steuer.gtdapp.dummy.DummyContent;
-import cz.steuer.gtdapp.model.TaskContract;
 
 public class NewTaskFragment extends Fragment implements View.OnClickListener {
 

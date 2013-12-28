@@ -82,32 +82,13 @@ public class TaskListActivity extends Activity
         currentCategory = (TaskCategory) getIntent().getSerializableExtra(ARG_TASK_CATEGORY);
         onCategorySelected(currentCategory != null ? currentCategory : TaskCategory.NEXT);
 
-//        Bundle arguments = new Bundle();
-//        arguments.putString(TaskListFragment.ARG_CATEGORY, TaskCategory.INBOX.toString());
-//        TaskListFragment fragment = new TaskListFragment();
-//        fragment.setArguments(arguments);
-//        getFragmentManager().beginTransaction()
-//                .add(R.id.task_list_container, fragment, TAG_FRAGMENT_TASKS)
-//                .commit();
 
         if (findViewById(R.id.task_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-large and
-            // res/values-sw600dp). If this view is present, then the
-            // activity should be in two-pane mode.
             mTwoPane = true;
-
-            // In two-pane mode, list items should be given the
-            // 'activated' state when touched.
-//            ((TaskListFragment) getFragmentManager()
-//                    .findFragmentById(R.id.task_list))
-//                    .setActivateOnItemClick(true);
         }
 
-//        menuLayout.makeAsWindowChild(R.id.menu_fragment);
         if(findViewById(R.id.menu_fragment) == null) {
             menuLayout = new MenuLayout(this, R.layout.menu_frame);
-
 
             menuLayout.getMenu().setOnDragListener(new View.OnDragListener() {
                 @Override
@@ -161,8 +142,6 @@ public class TaskListActivity extends Activity
 
                 }
             });
-
-//            menu.getMenu();
         }
 
 

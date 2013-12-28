@@ -56,9 +56,6 @@ public class NewTaskActivity extends FragmentActivity implements NewTaskFragment
 
     @Override
     public void onTaskAdd(String title) {
-
-
-
         ContentValues values = new ContentValues();
         values.put(TaskContract.TasksColumns.TITLE, title);
         values.put(TaskContract.TasksColumns.CATEGORY, taskCategory.toString());

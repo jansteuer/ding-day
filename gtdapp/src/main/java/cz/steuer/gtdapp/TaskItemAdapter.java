@@ -17,32 +17,20 @@ import cz.steuer.gtdapp.model.TaskContract;
  */
 public class TaskItemAdapter extends CursorAdapter {
 
-    /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
-     */
-    private Callbacks mCallbacks = sDummyCallbacks;
-
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
     public interface Callbacks {
-        /**
-         * Callback for when an item has been selected.
-         */
         public void onItemSelected(long id);
-
         public void onItemChecked(long id, boolean checked);
-
         public void onItemDragStarted(long id, View view);
     }
 
-    /**
-     * A dummy implementation of the {@link Callbacks} interface that does
-     * nothing. Used only when this fragment is not attached to an activity.
-     */
+    private static class ViewHolder {
+        long id;
+        TextView taskTitle;
+        CheckBox tastState;
+    }
+
+    private Callbacks mCallbacks = sDummyCallbacks;
+
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
         public void onItemSelected(long id) {
@@ -56,16 +44,14 @@ public class TaskItemAdapter extends CursorAdapter {
         public void onItemDragStarted(long id, View view) {
 
         }
-
     };
-
-    public void setCallbacksListener(TaskItemAdapter.Callbacks listener) {
-
-        mCallbacks = listener;
-    }
 
     public TaskItemAdapter(Context context, Cursor c, boolean autoRequery) {
         super(context, c, autoRequery);
+    }
+
+    public void setCallbacksListener(TaskItemAdapter.Callbacks listener) {
+        mCallbacks = listener;
     }
 
     @Override
@@ -122,11 +108,5 @@ public class TaskItemAdapter extends CursorAdapter {
 
         long id = cursor.getLong(cursor.getColumnIndex(TaskContract.TasksColumns._ID));
         holder.id = id;
-    }
-
-    static class ViewHolder {
-        long id;
-        TextView taskTitle;
-        CheckBox tastState;
     }
 }
