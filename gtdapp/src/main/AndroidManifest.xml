@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cz.steuer.gtdapp"
+    package="eu.dingday.app"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="cz.steuer.gtdapp.TaskListActivity"
+            android:name="eu.dingday.app.TaskListActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,25 +23,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="cz.steuer.gtdapp.TaskDetailActivity"
+            android:name="eu.dingday.app.TaskDetailActivity"
             android:label="@string/title_task_detail"
-            android:parentActivityName=".TaskListActivity" >
+            android:parentActivityName="eu.dingday.app.TaskListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="cz.steuer.gtdapp.TaskListActivity" />
+                android:value="eu.dingday.app.TaskListActivity" />
         </activity>
 
         <activity
-            android:name="cz.steuer.gtdapp.NewTaskActivity"
-            android:parentActivityName=".TaskListActivity" >
+            android:name="eu.dingday.app.NewTaskActivity"
+            android:parentActivityName="eu.dingday.app.TaskListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="cz.steuer.gtdapp.TaskListActivity" />
+                android:value="eu.dingday.app.TaskListActivity" />
         </activity>
 
         <provider
-            android:name=".model.TasksContentProvider"
-            android:authorities="cz.steuer.gtdapp"
+            android:name="eu.dingday.app.model.TasksContentProvider"
+            android:authorities="eu.dingday.app"
             android:exported="false" />
     </application>
 

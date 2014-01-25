@@ -8,11 +8,11 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="cz.steuer.gtdapp.TaskListActivity">
+    tools:context="eu.dingday.app.TaskListActivity">
 
     <fragment
         android:id="@+id/menu_fragment"
-        android:name="cz.steuer.gtdapp.MenuFragment"
+        android:name="eu.dingday.app.MenuFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/task_list"
-        android:name="cz.steuer.gtdapp.TaskListFragment"
+        android:name="eu.dingday.app.TaskListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

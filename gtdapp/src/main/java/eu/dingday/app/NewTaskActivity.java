@@ -1,4 +1,4 @@
-package cz.steuer.gtdapp;
+package eu.dingday.app;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,10 +11,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
-import java.util.concurrent.ExecutionException;
-
-import cz.steuer.gtdapp.enums.TaskCategory;
-import cz.steuer.gtdapp.model.TaskContract;
+import eu.dingday.app.enums.TaskCategory;
+import eu.dingday.app.model.TaskContract;
 
 
 public class NewTaskActivity extends FragmentActivity implements NewTaskFragment.Callbacks {

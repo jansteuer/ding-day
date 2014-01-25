@@ -10,7 +10,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="cz.steuer.gtdapp.TaskListActivity">
+    tools:context="eu.dingday.app.TaskListActivity">
 
 
 </FrameLayout>

@@ -1,4 +1,4 @@
-package cz.steuer.gtdapp;
+package eu.dingday.app;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import cz.steuer.gtdapp.model.TaskContract;
+import eu.dingday.app.model.TaskContract;
 
 /**
  * A fragment representing a single Task detail screen.

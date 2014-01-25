@@ -1,4 +1,4 @@
-package cz.steuer.gtdapp.model;
+package eu.dingday.app.model;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 
 import net.callmeike.android.data.util.ColumnMap;
 import net.callmeike.android.data.util.ProjectionMap;

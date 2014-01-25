@@ -1,4 +1,4 @@
-package cz.steuer.gtdapp;
+package eu.dingday.app;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import cz.steuer.gtdapp.enums.TaskCategory;
-import cz.steuer.gtdapp.model.TaskContract;
+import eu.dingday.app.enums.TaskCategory;
+import eu.dingday.app.model.TaskContract;
 
 public class MenuFragment  extends Fragment implements View.OnClickListener, View.OnDragListener {
 

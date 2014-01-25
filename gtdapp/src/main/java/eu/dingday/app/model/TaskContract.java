@@ -1,4 +1,4 @@
-package cz.steuer.gtdapp.model;
+package eu.dingday.app.model;
 
 import android.content.ContentResolver;
 import android.net.Uri;
@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
 public class TaskContract {
 
     /** The authority for the contacts provider */
-    public static final String AUTHORITY = "cz.steuer.gtdapp";
+    public static final String AUTHORITY = "eu.dingday.app";
     /** A content:// style uri to the authority for the contacts provider */
     public static final Uri AUTHORITY_URI = Uri.parse("content://" + AUTHORITY);
 
@@ -66,7 +66,7 @@ public class TaskContract {
 
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, TABLE);
 
-        public static final String MIME_TYPE = "/cz.steuer.gtdapp.contacts";
+        public static final String MIME_TYPE = "/eu.dingday.app.contacts";
 
         /** Contacts DIR type */
         public static final String CONTENT_TYPE_DIR

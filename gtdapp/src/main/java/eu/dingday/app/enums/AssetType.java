@@ -1,4 +1,4 @@
-package cz.steuer.gtdapp.enums;
+package eu.dingday.app.enums;
 
 /**
  * Created by honza on 12/18/13.

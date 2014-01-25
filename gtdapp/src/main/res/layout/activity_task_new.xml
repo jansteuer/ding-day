@@ -3,5 +3,5 @@
     android:id="@+id/task_new_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cz.steuer.gtdapp.NewTaskActivity"
+    tools:context="eu.dingday.app.NewTaskActivity"
     tools:ignore="MergeRootFrame" />

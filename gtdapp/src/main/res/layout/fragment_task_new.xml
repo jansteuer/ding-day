@@ -10,7 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        tools:context="cz.steuer.gtdapp.NewTaskFragment" />
+        tools:context="eu.dingday.app.NewTaskFragment" />
 
     <Button xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -19,5 +19,5 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:text="Add task"
-        tools:context="cz.steuer.gtdapp.NewTaskFragment" />
+        tools:context="eu.dingday.app.NewTaskFragment" />
 </LinearLayout>

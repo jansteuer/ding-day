@@ -1,4 +1,4 @@
-package cz.steuer.gtdapp.model;
+package eu.dingday.app.model;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import cz.steuer.gtdapp.enums.TaskCategory;
+import eu.dingday.app.enums.TaskCategory;
 
 /**
  * Created by honza on 12/18/13.

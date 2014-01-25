@@ -1,4 +1,4 @@
-package cz.steuer.gtdapp;
+package eu.dingday.app;
 
 import android.app.Activity;
 import android.content.Context;

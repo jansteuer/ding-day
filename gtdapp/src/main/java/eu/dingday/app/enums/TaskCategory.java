@@ -1,6 +1,6 @@
-package cz.steuer.gtdapp.enums;
+package eu.dingday.app.enums;
 
-import cz.steuer.gtdapp.R;
+import eu.dingday.app.R;
 
 /**
  * Created by honza on 12/18/13.

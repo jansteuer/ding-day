@@ -1,4 +1,4 @@
-package cz.steuer.gtdapp;
+package eu.dingday.app;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -15,8 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import cz.steuer.gtdapp.enums.TaskCategory;
-import cz.steuer.gtdapp.model.TaskContract;
+import eu.dingday.app.enums.TaskCategory;
+import eu.dingday.app.model.TaskContract;
 
 
 /**
