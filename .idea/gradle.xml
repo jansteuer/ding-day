@@ -5,6 +5,16 @@
       <GradleProjectSettings>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/SlidingMenu" />
+            <option value="$PROJECT_DIR$/gtdapp" />
+            <option value="$PROJECT_DIR$/lib" />
+            <option value="$PROJECT_DIR$/lib/SlidingMenu" />
+            <option value="$PROJECT_DIR$/lib/SlidingMenu/library" />
+          </set>
+        </option>
       </GradleProjectSettings>
     </option>
   </component>
